@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-    const { title, priority } = req.body;
+    const { title, priority, completed } = req.body;
 
     if (!title || !priority) {
         return res.status(400).json({
@@ -30,7 +30,8 @@ app.post('/', (req, res) => {
     const newTodo = {
         id: todoList.length + 1,
         title,
-        priority
+        priority,
+        completed: completed || false
     };
 
     todoList.push(newTodo);
@@ -43,7 +44,7 @@ app.post('/', (req, res) => {
 
 app.patch('/:id', (req, res) => {
     const { id } = req.params;
-    const { title, priority } = req.body;
+    const { title, priority, completed } = req.body;
     const todo = todoList.find(todo => todo.id === parseInt(id));
 
     if (!todo) {
@@ -51,6 +52,7 @@ app.patch('/:id', (req, res) => {
     }
     if (title) todo.title = title;
     if (priority) todo.priority = priority;
+    if (completed !== undefined) todo.completed = completed;
     res.json({
         message: "Todo updated successfully",
         todo
@@ -59,7 +61,7 @@ app.patch('/:id', (req, res) => {
 
 app.put('/:id', (req, res) => {
     const { id } = req.params;
-    const { title, priority } = req.body;
+    const { title, priority, completed } = req.body;
     const todo = todoList.find(todo => todo.id === parseInt(id));
 
     if (!todo) {
@@ -67,6 +69,7 @@ app.put('/:id', (req, res) => {
     }
     if (title) todo.title = title;
     if (priority) todo.priority = priority;
+    if (completed !== undefined) todo.completed = completed;
     res.json({
         message: "Todo updated successfully",
         todo
