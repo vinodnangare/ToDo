@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Todo = () => {
-  const api = import.meta.env.VITE_API || "http://localhost:8080";
+  const api = (import.meta.env.VITE_API || "http://localhost:8080").replace(/\/$/, "");
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("Low");
@@ -24,11 +24,15 @@ const Todo = () => {
 
   const addItem = async () => {
     if (!title) return;
-    await axios.post(api, { title, priority, completed });
-    setTitle("");
-    setPriority("Low");
-    setCompleted(false);
-    loadData();
+    try {
+      await axios.post(api, { title, priority, completed });
+      setTitle("");
+      setPriority("Low");
+      setCompleted(false);
+      loadData();
+    } catch (e) {
+      console.error("Add failed:", e.response?.data || e.message);
+    }
   };
 
   const startEdit = (item) => {
@@ -39,22 +43,34 @@ const Todo = () => {
   };
 
   const saveEdit = async () => {
-    await axios.patch(`${api}/${edit}`, { title, priority, completed });
-    setEdit(null);
-    setTitle("");
-    setPriority("Low");
-    setCompleted(false);
-    loadData();
+    try {
+      await axios.patch(`${api}/${edit}`, { title, priority, completed });
+      setEdit(null);
+      setTitle("");
+      setPriority("Low");
+      setCompleted(false);
+      loadData();
+    } catch (e) {
+      console.error("Edit failed:", e.response?.data || e.message);
+    }
   };
 
   const removeItem = async (id) => {
-    await axios.delete(`${api}/${id}`);
-    loadData();
+    try {
+      await axios.delete(`${api}/${id}`);
+      loadData();
+    } catch (e) {
+      console.error("Delete failed:", e.response?.data || e.message);
+    }
   };
 
   const toggleCompleted = async (item) => {
-    await axios.patch(`${api}/${item.id}`, { completed: !item.completed });
-    loadData();
+    try {
+      await axios.patch(`${api}/${item.id}`, { completed: !item.completed });
+      loadData();
+    } catch (e) {
+      console.error("Toggle failed:", e.response?.data || e.message);
+    }
   };
 
   return (
