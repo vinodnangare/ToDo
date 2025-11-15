@@ -34,6 +34,17 @@ app.post('/', (req, res) => {
     });
 });
 
+app.delete('/:id', (req, res) => {
+    const { id } = req.params;
+    const index = todoList.findIndex(todo => todo.id === parseInt(id));
+    if (index === -1) {
+        return res.status(404).json({ error: "Todo not found" });
+    }
+    todoList.splice(index, 1);
+    res.json({ message: "Todo deleted successfully" });
+}
+);
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
