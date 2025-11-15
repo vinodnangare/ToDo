@@ -34,6 +34,22 @@ app.post('/', (req, res) => {
     });
 });
 
+app.patch('/:id', (req, res) => {
+    const { id } = req.params;
+    const { title, priority } = req.body;
+    const todo = todoList.find(todo => todo.id === parseInt(id));
+
+    if (!todo) {
+        return res.status(404).json({ error: "Todo not found" });
+    }
+    if (title) todo.title = title;
+    if (priority) todo.priority = priority;
+    res.json({  
+        message: "Todo updated successfully",
+        todo
+    });
+});
+
 app.put('/:id', (req, res) => {
     const { id } = req.params;
     const { title, priority } = req.body;
@@ -49,6 +65,7 @@ app.put('/:id', (req, res) => {
         todo
     });
 });
+
 
 
 app.delete('/:id', (req, res) => {
